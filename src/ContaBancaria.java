@@ -10,9 +10,9 @@ public class ContaBancaria {
     int numero;
     private int saldo;
     private Lock lock = new ReentrantLock();
-    private Condition canWrite = lock.newCondition();
-    private Condition canRead = lock.newCondition();
-    private boolean occupied = false; // se o buffer estiver ocupado
+//    private Condition canWrite = lock.newCondition();
+//    private Condition canRead = lock.newCondition();
+//    private boolean occupied = false; // se o buffer estiver ocupado
 
     ContaBancaria(int numero, int saldo) {
         this.numero = numero;
@@ -22,63 +22,48 @@ public class ContaBancaria {
 
     public int getSaldo() {
 
-        lock.lock();
-        try {
-            return saldo;
-        } finally {
-            lock.unlock();
-        }
-//        return saldo;
+//        lock.lock();
+        return saldo;
     }
 
     public void setSaldo(int saldo) {
 
-        lock.lock();
-        try {
-
-            while (occupied) {
-                canWrite.await();
-            }
-
-            this.saldo = saldo;
-
-            canRead.signal();
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            occupied = false;
-            lock.unlock();
-        }
-//        this.saldo = saldo;
+//        try {
+//            this.saldo = saldo;
+//        } finally {
+//            lock.unlock();
+//        }
+        this.saldo = saldo;
     }
 
     public int debitarValor(int valor) {
 
-//        if (this.saldo < valor) {
-//            System.out.println("Saldo insuficiente para saque.");
-//            return -1;
-//        } else {
-//            this.saldo -= valor;
-//            return this.saldo;
+//        lock.lock();
+//        try {
+//            if (this.saldo < valor) {
+//                System.out.println("Saldo insuficiente para saque.");
+//                return -1;
+//            } else {
+//                this.saldo -= valor;
+//                return this.saldo;
+//            }
+//        } finally {
+//            lock.unlock();
 //        }
-
-        lock.lock();
-        try {
-            while (occupied) {
-                canWrite.await();
-            }
-
+        if (this.saldo < valor) {
+            System.out.println("Saldo insuficiente para saque.");
+            return -1;
+        } else {
             this.saldo -= valor;
-
-            canRead.signal();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            occupied = false;
-            lock.unlock();
             return this.saldo;
         }
     }
 
+    public void lock() {
+        lock.lock();
+    }
+
+    public void unlock() {
+        lock.unlock();
+    }
 }

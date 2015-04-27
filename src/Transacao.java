@@ -1,4 +1,3 @@
-
 /**
  * Created by vitor on 4/15/15.
  */
@@ -29,6 +28,7 @@ public class Transacao extends Thread {
     @Override
     public void run() {
 
+        contaDestino.lock();
         int saldo = contaDestino.getSaldo();
 
         System.out.println("Cliente " + getName() + " ativo.");
@@ -44,5 +44,6 @@ public class Transacao extends Thread {
         }
 
         System.out.println("Conta Destino, saldo: " + contaDestino.getSaldo());
+        contaDestino.unlock();
     }
 }
