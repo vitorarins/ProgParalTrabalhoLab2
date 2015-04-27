@@ -1,5 +1,3 @@
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
 
 /**
  * Created by vitor on 4/15/15.
@@ -10,16 +8,13 @@ public class Transacao extends Thread {
     private ContaBancaria contaFonte = null;
     private ContaBancaria contaDestino = null;
     private double valueOrPercentage;
-    private CyclicBarrier gate;
 
-    public Transacao(String nome, ContaBancaria contaFonte, ContaBancaria contaDestino, double valueOrPercentage,
-                     CyclicBarrier gate) {
+    public Transacao(String nome, ContaBancaria contaFonte, ContaBancaria contaDestino, double valueOrPercentage) {
 
         super(nome);
         this.contaFonte = contaFonte;
         this.contaDestino = contaDestino;
         this.valueOrPercentage = valueOrPercentage;
-        this.gate = gate;
     }
 
     public int getVariacao() {
@@ -33,14 +28,9 @@ public class Transacao extends Thread {
 
     @Override
     public void run() {
-        try {
-            gate.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (BrokenBarrierException e) {
-            e.printStackTrace();
-        }
+
         int saldo = contaDestino.getSaldo();
+
         System.out.println("Cliente " + getName() + " ativo.");
 
         if (valueOrPercentage <= 1) {
